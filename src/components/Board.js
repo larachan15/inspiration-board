@@ -44,8 +44,32 @@ class Board extends Component {
     })
     .catch((error) => {
       this.setState({
-        error: error.message
+        errorMessages: error.message
       })
+    })
+  }
+
+  deleteCard = (id) => {
+    console.log("This card is being deleted!");
+    const DELETE_CARD = `https://inspiration-board.herokuapp.com/cards/${id}`;
+
+    console.log(DELETE_CARD);
+
+    axios.delete(DELETE_CARD)
+    .then(() => {
+      const cardsArray = this.state.cards
+      console.log(cardsArray.length);
+
+      const removedCard = cardsArray.findIndex(card => card.id === id)
+      cardsArray.splice(removedCard, 1)
+       this.setState({
+        cards: cardsArray
+      });
+     })
+    .catch((error) => {
+      this.setState({
+        errorMessages: error.message
+      });
     })
   }
 
@@ -67,9 +91,11 @@ class Board extends Component {
       card = card.card;
 
       return <Card
-                key={card.id}
+                key={i}
+                id={card.id}
                 text={card.text}
                 emoji={emoji.getUnicode(`${card.emoji}`)}
+                deleteCardCallback={this.deleteCard}
              />
     })
 
